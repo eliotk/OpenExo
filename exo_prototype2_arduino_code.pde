@@ -1,4 +1,6 @@
 #include <Servo.h>
+# Arduino code to power lower limb assistive exoskeleton device (i.e. powered orthotic). more info @ openexo.com
+# @author eliot kristan (eliotk.net)
 
 const int analogInPin = A0;  // Analog input pin that the potentiometer is attached to - "sensorValue"
 const int analogOutPin = 11; // Analog output pin that the LED is attached to
