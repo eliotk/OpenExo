@@ -1,4 +1,4 @@
-#include <Servo.h>
+# include <Servo.h>
 # Arduino code to power lower limb assistive exoskeleton device (i.e. powered orthotic). more info @ openexo.com
 # @author eliot kristan (eliotk.net)
 
@@ -46,7 +46,7 @@ void setup() {
   pinMode(buttonPin, INPUT); 
   pinMode(8, INPUT); 
   
-  // we're setting brake pin as input to avoid any digital writing for now
+  // set brake pin as input to avoid any digital writing for now
   pinMode(brakePin, INPUT);  
     for (int thisReading = 0; thisReading < numReadings; thisReading++)
       readings[thisReading] = 0;
@@ -71,7 +71,7 @@ void loop() {
     mode = 0;
   }
   
-    // what are we doing
+    // check for mode and execute appropriate function
     switch(mode) {
       case 0:
       break;
@@ -89,17 +89,16 @@ void loop() {
       break;
     }
 
-  // read the analog in value:
+  // read the analog in value which is the servo encoder:
   sensorValue = analogRead(analogInPin);
 
 
   fsrReading = analogRead(fsrAnalogPin); 
 
   total= total - readings[index];        
-  // read from the sensor:  
+  read from the sensor:  
   readings[index] = sensorValue;
-   total= total + readings[index];      
-  // advance to the next position in the array:  
+  total= total + readings[index];      
   index = index + 1;                    
 
   // if we're at the end of the array...
@@ -111,7 +110,6 @@ void loop() {
   average = total / numReadings;          
   
   // map it to the range of the analog out:
-  // outputValue = map(sensorValue, 0, 1023, 0, 255);  
   outputValue = average / 4;
 }
 
@@ -139,7 +137,7 @@ void walk() {
   
     if( fsrReading > fsrReadingMin ) {
       brake(0);
-      // let's map that reading to speed
+      // map that reading to speed
       if( sensorValue <  hipCenteredPosition+300 ) {
         // move forward
         outputValue = map(fsrReading, fsrReadingMin, fsrReadingMax, 93,180);  
@@ -148,7 +146,7 @@ void walk() {
         // brake(1); 
       }
     } else {
-      // let's see where we are, if this is walking we want to come back down to standing
+      // if this is walking, actuate to standing
       if( sensorValue < (hipCenteredPosition-30)  ) {
         // we need to moveforward
         outputValue = 160; 
@@ -168,10 +166,8 @@ void sitDown() {
     // make sure we have a firm presh to initiate slight push out on hip  
     if( fsrReading > fsrReadingMin && sensorValue < (hipCenteredPosition+100)) {
         pinMode(powerKillPin, INPUT);
-        // outputValue = 93;
         outputValue = map(fsrReading, fsrReadingMin, fsrReadingMax, 93,180);  
-        motorHip.write(outputValue);
-          
+        motorHip.write(outputValue);        
     } else {
         // let gravity do the rest
         analogWrite(powerKillPin, LOW);
@@ -182,16 +178,12 @@ void sitDown() {
 }
 
 void standup() {
-  // outputValue = 93;  
     if( fsrReading > fsrReadingMin ) {
-      Serial.println("here");
       pinMode(powerKillPin, INPUT); 
       Serial.println(fsrReading);
       // let's map that reading to speed
       if( sensorValue >  hipCenteredPosition+50 ) {
-        // pinMode(powerKillPin, INPUT);
         // stand up
-        // outputValue = 10; 
         outputValue = map(fsrReading, fsrReadingMin, fsrReadingMax, 70,0);
       } else {
         outputValue = 93;
@@ -200,8 +192,7 @@ void standup() {
     } else {
       analogWrite(powerKillPin, LOW);
     } 
- 
-     motorHip.write(outputValue);    
+    motorHip.write(outputValue);    
 }
 
 void checkKillButtonState() {
